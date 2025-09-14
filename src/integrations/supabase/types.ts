@@ -145,6 +145,36 @@ export type Database = {
         }
         Relationships: []
       }
+      municipal_budget: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          id: string
+          updated_at: string
+          ward: number
+          year: number
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          ward: number
+          year: number
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          ward?: number
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
