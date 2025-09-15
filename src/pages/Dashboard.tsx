@@ -10,6 +10,7 @@ import SummaryCards from '@/components/budget/SummaryCards';
 import BudgetTable from '@/components/budget/BudgetTable';
 import BudgetChart from '@/components/budget/BudgetChart';
 import AiInsights from '@/components/budget/AiInsights';
+import { CsvImport } from '@/components/budget/CsvImport';
 import WardSelector from '@/components/budget/WardSelector';
 import YearSelector from '@/components/budget/YearSelector';
 
@@ -117,22 +118,29 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {/* Controls */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Budget Data Filters</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-              <WardSelector value={ward} onChange={setWard} />
-              <YearSelector value={year} onChange={setYear} />
-              <Button onClick={fetchBudgetData} disabled={loading || !ward || !year}>
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                <Search className="mr-2 h-4 w-4" />
-                {loading ? 'Fetching...' : 'Fetch Budget Data'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Budget Data Filters</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                  <WardSelector value={ward} onChange={setWard} />
+                  <YearSelector value={year} onChange={setYear} />
+                  <Button onClick={fetchBudgetData} disabled={loading || !ward || !year}>
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    <Search className="mr-2 h-4 w-4" />
+                    {loading ? 'Fetching...' : 'Fetch Budget Data'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="lg:col-span-1">
+            <CsvImport />
+          </div>
+        </div>
 
         {/* Summary Cards */}
         {summary && <SummaryCards summary={summary} />}
