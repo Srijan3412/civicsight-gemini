@@ -35,11 +35,17 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({ value, onChange
         .not('account', 'is', null);
 
       if (error) {
+        console.error('Supabase error:', error);
         throw error;
       }
 
+      if (!data) {
+        setDepartments([]);
+        return;
+      }
+
       // Extract unique departments and sort alphabetically
-      const uniqueDepartments = [...new Set(data.map(item => item.account))]
+      const uniqueDepartments = [...new Set(data.map((item: any) => item.account))]
         .filter(Boolean)
         .sort();
 
@@ -51,6 +57,7 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({ value, onChange
         title: "Error",
         description: "Failed to load departments. Please try again.",
       });
+      setDepartments([]);
     } finally {
       setLoading(false);
     }
