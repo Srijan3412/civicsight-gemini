@@ -15,10 +15,11 @@ interface BudgetItem {
 
 interface AiInsightsProps {
   budgetData: BudgetItem[];
-  department: string;
+  ward: number;
+  year: number;
 }
 
-const AiInsights: React.FC<AiInsightsProps> = ({ budgetData, department }) => {
+const AiInsights: React.FC<AiInsightsProps> = ({ budgetData, ward, year }) => {
   const [insights, setInsights] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -39,7 +40,8 @@ const AiInsights: React.FC<AiInsightsProps> = ({ budgetData, department }) => {
       const { data, error } = await supabase.functions.invoke('get-ai-insights', {
         body: {
           budgetData,
-          department
+          ward,
+          year
         }
       });
 
@@ -95,7 +97,7 @@ const AiInsights: React.FC<AiInsightsProps> = ({ budgetData, department }) => {
           {!insights && !loading && (
             <p className="text-muted-foreground text-sm">
               Click the analyze button to get AI-powered insights about spending patterns, 
-              anomalies, and optimization opportunities for this department's budget.
+              anomalies, and optimization opportunities for this ward's budget.
             </p>
           )}
         </div>
