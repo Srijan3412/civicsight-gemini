@@ -18,14 +18,14 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { ward, year } = await req.json();
+    const { department } = await req.json();
 
-    console.log(`Fetching budget data for ward: ${ward}, year: ${year}`);
+    console.log(`Fetching budget data for department: ${department}`);
 
     // Validate inputs
-    if (!ward || !year) {
+    if (!department) {
       return new Response(
-        JSON.stringify({ error: 'Ward and year are required' }),
+        JSON.stringify({ error: 'Department is required' }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -37,9 +37,8 @@ serve(async (req) => {
     const { data: budgetData, error } = await supabase
       .from('municipal_budget')
       .select('*')
-      .eq('ward', ward)
-      .eq('year', year)
-      .order('amount', { ascending: false });
+      .eq('account', department)
+      .order('used_amt', { ascending: false });
 
     if (error) {
       console.error('Error fetching budget data:', error);
@@ -53,31 +52,20 @@ serve(async (req) => {
     }
 
     // Calculate summary statistics
-    const totalBudget = budgetData.reduce((sum, item) => sum + Number(item.amount), 0);
-    const largestCategory = budgetData[0]; // Already sorted by amount desc
-
-    // Get previous year data for comparison
-    const { data: previousYearData } = await supabase
-      .from('municipal_budget')
-      .select('*')
-      .eq('ward', ward)
-      .eq('year', year - 1);
-
-    let yearOverYearChange = 0;
-    if (previousYearData && previousYearData.length > 0) {
-      const previousTotal = previousYearData.reduce((sum, item) => sum + Number(item.amount), 0);
-      yearOverYearChange = ((totalBudget - previousTotal) / previousTotal) * 100;
-    }
+    const totalBudget = budgetData.reduce((sum, item) => sum + Number(item.used_amt || 0), 0);
+    const totalAllocated = budgetData.reduce((sum, item) => sum + Number(item.account_budget_a || 0), 0);
+    const largestItem = budgetData[0]; // Already sorted by used_amt desc
 
     const response = {
       budgetData,
       summary: {
-        totalBudget,
-        largestCategory: largestCategory ? {
-          category: largestCategory.category,
-          amount: largestCategory.amount
+        totalBudget: totalAllocated,
+        totalUsed: totalBudget,
+        largestCategory: largestItem ? {
+          category: largestItem.account_budget_a,
+          amount: largestItem.used_amt
         } : null,
-        yearOverYearChange: Math.round(yearOverYearChange * 100) / 100
+        utilizationRate: totalAllocated > 0 ? Math.round((totalBudget / totalAllocated) * 100) : 0
       }
     };
 
