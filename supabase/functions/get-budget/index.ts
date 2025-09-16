@@ -51,28 +51,21 @@ serve(async (req) => {
       );
     }
 
-    // Transform data to match expected format
-    const transformedData = budgetData?.map(item => ({
-      id: item.id,
-      category: item.glcode || 'Unknown Category',
-      amount: Number(item.used_amt || 0),
-      ward: 0, // Not used anymore but kept for compatibility
-      year: new Date().getFullYear() // Default to current year
-    })) || [];
-
     // Calculate summary statistics
-    const totalBudget = transformedData.reduce((sum, item) => sum + item.amount, 0);
-    const largestItem = transformedData[0]; // Already sorted by used_amt desc
+    const totalBudget = budgetData.reduce((sum, item) => sum + Number(item.used_amt || 0), 0);
+    const totalAllocated = budgetData.reduce((sum, item) => sum + Number(item.account_budget_a || 0), 0);
+    const largestItem = budgetData[0]; // Already sorted by used_amt desc
 
     const response = {
-      budgetData: transformedData,
+      budgetData,
       summary: {
-        totalBudget,
+        totalBudget: totalAllocated,
+        totalUsed: totalBudget,
         largestCategory: largestItem ? {
-          category: largestItem.category,
-          amount: largestItem.amount
+          category: largestItem.account_budget_a,
+          amount: largestItem.used_amt
         } : null,
-        yearOverYearChange: 0 // TODO: Calculate when we have historical data
+        utilizationRate: totalAllocated > 0 ? Math.round((totalBudget / totalAllocated) * 100) : 0
       }
     };
 
