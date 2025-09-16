@@ -11,8 +11,7 @@ import BudgetTable from '@/components/budget/BudgetTable';
 import BudgetChart from '@/components/budget/BudgetChart';
 import AiInsights from '@/components/budget/AiInsights';
 import { CsvImport } from '@/components/budget/CsvImport';
-import WardSelector from '@/components/budget/WardSelector';
-import YearSelector from '@/components/budget/YearSelector';
+import DepartmentSelector from '@/components/budget/DepartmentSelector';
 
 interface BudgetItem {
   id: string;
@@ -32,8 +31,7 @@ interface BudgetSummary {
 }
 
 const Dashboard = () => {
-  const [ward, setWard] = useState('');
-  const [year, setYear] = useState('');
+  const [department, setDepartment] = useState('');
   const [budgetData, setBudgetData] = useState<BudgetItem[]>([]);
   const [summary, setSummary] = useState<BudgetSummary | null>(null);
   const [loading, setLoading] = useState(false);
@@ -48,11 +46,11 @@ const Dashboard = () => {
   }, [user, navigate]);
 
   const fetchBudgetData = async () => {
-    if (!ward || !year) {
+    if (!department) {
       toast({
         variant: "destructive",
         title: "Missing Information",
-        description: "Please select both ward and year.",
+        description: "Please select a department.",
       });
       return;
     }
@@ -62,8 +60,7 @@ const Dashboard = () => {
     try {
       const { data, error } = await supabase.functions.invoke('get-budget', {
         body: {
-          ward: parseInt(ward),
-          year: parseInt(year)
+          department: department
         }
       });
 
@@ -76,7 +73,7 @@ const Dashboard = () => {
       
       toast({
         title: "Data Loaded",
-        description: `Found ${data.budgetData?.length || 0} budget items for Ward ${ward}, ${year}.`,
+        description: `Found ${data.budgetData?.length || 0} budget items for ${department}.`,
       });
     } catch (error) {
       console.error('Error fetching budget data:', error);
@@ -125,10 +122,9 @@ const Dashboard = () => {
                 <CardTitle>Budget Data Filters</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                  <WardSelector value={ward} onChange={setWard} />
-                  <YearSelector value={year} onChange={setYear} />
-                  <Button onClick={fetchBudgetData} disabled={loading || !ward || !year}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                  <DepartmentSelector value={department} onChange={setDepartment} />
+                  <Button onClick={fetchBudgetData} disabled={loading || !department}>
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     <Search className="mr-2 h-4 w-4" />
                     {loading ? 'Fetching...' : 'Fetch Budget Data'}
@@ -148,13 +144,13 @@ const Dashboard = () => {
         {/* Main Content Grid */}
         {budgetData.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <BudgetTable budgetData={budgetData} ward={parseInt(ward)} year={parseInt(year)} />
+            <BudgetTable budgetData={budgetData} department={department} />
             <BudgetChart budgetData={budgetData} />
           </div>
         )}
 
         {/* AI Insights */}
-        <AiInsights budgetData={budgetData} ward={parseInt(ward)} year={parseInt(year)} />
+        <AiInsights budgetData={budgetData} department={department} />
 
         {/* Empty State */}
         {!summary && !loading && (
@@ -163,7 +159,7 @@ const Dashboard = () => {
               <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Data Loaded</h3>
               <p className="text-muted-foreground">
-                Select a ward and year, then click "Fetch Budget Data" to view municipal budget information.
+                Select a department, then click "Fetch Budget Data" to view municipal budget information.
               </p>
             </CardContent>
           </Card>

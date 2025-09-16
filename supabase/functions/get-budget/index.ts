@@ -18,14 +18,14 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { ward, year } = await req.json();
+    const { department } = await req.json();
 
-    console.log(`Fetching budget data for ward: ${ward}, year: ${year}`);
+    console.log(`Fetching budget data for department: ${department}`);
 
     // Validate inputs
-    if (!ward || !year) {
+    if (!department) {
       return new Response(
-        JSON.stringify({ error: 'Ward and year are required' }),
+        JSON.stringify({ error: 'Department is required' }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -37,9 +37,8 @@ serve(async (req) => {
     const { data: budgetData, error } = await supabase
       .from('municipal_budget')
       .select('*')
-      .eq('ward', ward)
-      .eq('year', year)
-      .order('amount', { ascending: false });
+      .eq('account', department)
+      .order('used_amt', { ascending: false });
 
     if (error) {
       console.error('Error fetching budget data:', error);
@@ -52,32 +51,28 @@ serve(async (req) => {
       );
     }
 
+    // Transform data to match expected format
+    const transformedData = budgetData?.map(item => ({
+      id: item.id,
+      category: item.glcode || 'Unknown Category',
+      amount: Number(item.used_amt || 0),
+      ward: 0, // Not used anymore but kept for compatibility
+      year: new Date().getFullYear() // Default to current year
+    })) || [];
+
     // Calculate summary statistics
-    const totalBudget = budgetData.reduce((sum, item) => sum + Number(item.amount), 0);
-    const largestCategory = budgetData[0]; // Already sorted by amount desc
-
-    // Get previous year data for comparison
-    const { data: previousYearData } = await supabase
-      .from('municipal_budget')
-      .select('*')
-      .eq('ward', ward)
-      .eq('year', year - 1);
-
-    let yearOverYearChange = 0;
-    if (previousYearData && previousYearData.length > 0) {
-      const previousTotal = previousYearData.reduce((sum, item) => sum + Number(item.amount), 0);
-      yearOverYearChange = ((totalBudget - previousTotal) / previousTotal) * 100;
-    }
+    const totalBudget = transformedData.reduce((sum, item) => sum + item.amount, 0);
+    const largestItem = transformedData[0]; // Already sorted by used_amt desc
 
     const response = {
-      budgetData,
+      budgetData: transformedData,
       summary: {
         totalBudget,
-        largestCategory: largestCategory ? {
-          category: largestCategory.category,
-          amount: largestCategory.amount
+        largestCategory: largestItem ? {
+          category: largestItem.category,
+          amount: largestItem.amount
         } : null,
-        yearOverYearChange: Math.round(yearOverYearChange * 100) / 100
+        yearOverYearChange: 0 // TODO: Calculate when we have historical data
       }
     };
 

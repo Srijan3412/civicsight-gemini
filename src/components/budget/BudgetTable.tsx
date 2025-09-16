@@ -20,11 +20,10 @@ interface BudgetItem {
 
 interface BudgetTableProps {
   budgetData: BudgetItem[];
-  ward: number;
-  year: number;
+  department: string;
 }
 
-const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, ward, year }) => {
+const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, department }) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -38,7 +37,7 @@ const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, ward, year }) => 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Budget Breakdown - Ward {ward}, {year}</CardTitle>
+        <CardTitle>Budget Data - {department}</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
