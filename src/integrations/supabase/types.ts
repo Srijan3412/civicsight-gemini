@@ -88,6 +88,33 @@ export type Database = {
           },
         ]
       }
+      citizen_reports: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_urls: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image_urls?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_urls?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           comment: string | null
@@ -147,33 +174,47 @@ export type Database = {
       }
       municipal_budget: {
         Row: {
-          amount: number
-          category: string
-          created_at: string
+          account: string
+          account_budget_a: string
+          created_at: string | null
+          file_id: string | null
+          glcode: string
           id: string
-          updated_at: string
-          ward: number
-          year: number
+          remaining_amt: number
+          used_amt: number
+          user_id: string | null
         }
         Insert: {
-          amount: number
-          category: string
-          created_at?: string
+          account: string
+          account_budget_a: string
+          created_at?: string | null
+          file_id?: string | null
+          glcode: string
           id?: string
-          updated_at?: string
-          ward: number
-          year: number
+          remaining_amt: number
+          used_amt: number
+          user_id?: string | null
         }
         Update: {
-          amount?: number
-          category?: string
-          created_at?: string
+          account?: string
+          account_budget_a?: string
+          created_at?: string | null
+          file_id?: string | null
+          glcode?: string
           id?: string
-          updated_at?: string
-          ward?: number
-          year?: number
+          remaining_amt?: number
+          used_amt?: number
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "municipal_budget_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "budget_files"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
