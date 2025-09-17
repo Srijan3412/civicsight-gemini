@@ -100,15 +100,11 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Municipal Budget Portal</h1>
+        <div className="container mx-auto px-4 py-4">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Budget Dashboard</h1>
             <p className="text-muted-foreground">Welcome, {user.email}</p>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
         </div>
       </header>
 
