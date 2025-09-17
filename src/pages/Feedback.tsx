@@ -145,21 +145,30 @@ const Feedback = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Citizen Feedback</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center rounded-full bg-primary/10 px-4 py-2 text-sm text-primary mb-6">
+            <MessageSquare className="mr-2 h-4 w-4" />
+            Citizen Engagement
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
+            Share Your <span className="bg-gradient-primary bg-clip-text text-transparent">Voice</span>
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Report issues in your community. Help us improve municipal services by sharing 
-            your concerns and observations.
+            your concerns and observations with local government.
           </p>
         </div>
 
         {/* Report Form */}
-        <Card className="max-w-2xl mx-auto">
+        <Card className="max-w-2xl mx-auto bg-gradient-card border-0 shadow-xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
+            <CardTitle className="text-2xl flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
+                <MessageSquare className="h-5 w-5 text-white" />
+              </div>
               Submit a Report
             </CardTitle>
+            <p className="text-muted-foreground">Help improve your community by reporting issues that need attention.</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -221,10 +230,11 @@ const Feedback = () => {
               <Button 
                 type="submit" 
                 disabled={loading || !description.trim() || !category}
-                className="w-full"
+                className="w-full bg-gradient-primary hover:opacity-90 shadow-lg"
+                size="lg"
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                <Upload className="mr-2 h-4 w-4" />
+                <Upload className="mr-2 h-5 w-5" />
                 {loading ? 'Submitting Report...' : 'Submit Report'}
               </Button>
             </form>
@@ -232,40 +242,40 @@ const Feedback = () => {
         </Card>
 
         {/* Info Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <MessageSquare className="h-8 w-8 text-primary mx-auto mb-2" />
-                <h3 className="font-semibold mb-2">Anonymous Reporting</h3>
-                <p className="text-sm text-muted-foreground">
-                  No registration required. Report issues anonymously and help improve your community.
-                </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-card border-0">
+            <CardContent className="pt-8 text-center">
+              <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/20 transition-colors">
+                <MessageSquare className="h-8 w-8 text-blue-500" />
               </div>
+              <h3 className="font-semibold text-lg mb-3">Anonymous Reporting</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                No registration required. Report issues anonymously and help improve your community.
+              </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <Camera className="h-8 w-8 text-primary mx-auto mb-2" />
-                <h3 className="font-semibold mb-2">Photo Evidence</h3>
-                <p className="text-sm text-muted-foreground">
-                  Include photos to help us better understand and address the issue quickly.
-                </p>
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-card border-0">
+            <CardContent className="pt-8 text-center">
+              <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/20 transition-colors">
+                <Camera className="h-8 w-8 text-green-500" />
               </div>
+              <h3 className="font-semibold text-lg mb-3">Photo Evidence</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Include photos to help us better understand and address the issue quickly.
+              </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <Check className="h-8 w-8 text-primary mx-auto mb-2" />
-                <h3 className="font-semibold mb-2">Quick Response</h3>
-                <p className="text-sm text-muted-foreground">
-                  Reports are reviewed regularly and appropriate action is taken by relevant departments.
-                </p>
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-card border-0">
+            <CardContent className="pt-8 text-center">
+              <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-500/20 transition-colors">
+                <Check className="h-8 w-8 text-purple-500" />
               </div>
+              <h3 className="font-semibold text-lg mb-3">Quick Response</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Reports are reviewed regularly and appropriate action is taken by relevant departments.
+              </p>
             </CardContent>
           </Card>
         </div>

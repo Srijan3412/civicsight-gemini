@@ -122,18 +122,30 @@ const Insights = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">AI-Powered Budget Insights</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center rounded-full bg-primary/10 px-4 py-2 text-sm text-primary mb-6">
+            <Brain className="mr-2 h-4 w-4" />
+            AI-Powered Analysis
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
+            Budget <span className="bg-gradient-primary bg-clip-text text-transparent">Insights</span>
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Get intelligent analysis of municipal budget data with AI-driven insights, 
             anomaly detection, and optimization recommendations.
           </p>
         </div>
 
         {/* Controls */}
-        <Card className="mb-8">
+        <Card className="mb-8 bg-gradient-card border-0 shadow-lg">
           <CardHeader>
-            <CardTitle>Generate Insights</CardTitle>
+            <CardTitle className="text-xl flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+                <Brain className="h-4 w-4 text-white" />
+              </div>
+              Generate AI Analysis
+            </CardTitle>
+            <p className="text-muted-foreground">Load budget data and generate intelligent insights with our AI assistant.</p>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
@@ -142,6 +154,7 @@ const Insights = () => {
                 onClick={fetchBudgetData} 
                 disabled={fetchingData || !department}
                 variant="outline"
+                className="hover-scale"
               >
                 {fetchingData && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Load Budget Data
@@ -149,16 +162,19 @@ const Insights = () => {
               <Button 
                 onClick={generateInsights} 
                 disabled={loading || budgetData.length === 0}
+                className="bg-gradient-primary hover:opacity-90 shadow-md"
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 <Brain className="mr-2 h-4 w-4" />
-                Generate AI Insights
+                Generate Insights
               </Button>
             </div>
             {budgetData.length > 0 && (
-              <p className="text-sm text-muted-foreground mt-2">
-                Loaded {budgetData.length} budget items for {department}
-              </p>
+              <div className="mt-4 p-3 bg-primary/5 rounded-lg border-l-4 border-primary">
+                <p className="text-sm text-primary font-medium">
+                  ✅ Loaded {budgetData.length} budget items for {department}
+                </p>
+              </div>
             )}
           </CardContent>
         </Card>

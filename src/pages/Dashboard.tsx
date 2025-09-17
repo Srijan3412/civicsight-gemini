@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, LogOut, Search } from 'lucide-react';
+import { Loader2, LogOut, Search, BarChart3, Brain } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -108,55 +108,87 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {/* Controls */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Budget Data Filters</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+        <div className="mb-8">
+          <Card className="bg-gradient-card border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
+                  <BarChart3 className="h-5 w-5 text-white" />
+                </div>
+                Budget Data Explorer
+              </CardTitle>
+              <p className="text-muted-foreground">Select a department to analyze municipal budget allocation and spending patterns.</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div className="md:col-span-1">
                   <DepartmentSelector value={department} onChange={setDepartment} />
-                  <Button onClick={fetchBudgetData} disabled={loading || !department}>
+                </div>
+                <div className="md:col-span-1">
+                  <Button 
+                    onClick={fetchBudgetData} 
+                    disabled={loading || !department}
+                    className="w-full bg-gradient-primary hover:opacity-90 shadow-md"
+                    size="lg"
+                  >
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     <Search className="mr-2 h-4 w-4" />
-                    {loading ? 'Fetching...' : 'Fetch Budget Data'}
+                    {loading ? 'Loading...' : 'Analyze Budget'}
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="lg:col-span-1">
-            <CsvImport />
-          </div>
+                <div className="md:col-span-1">
+                  <CsvImport />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Summary Cards */}
-        {summary && <SummaryCards summary={summary} />}
+        {summary && (
+          <div className="animate-fade-in">
+            <SummaryCards summary={summary} />
+          </div>
+        )}
 
         {/* Main Content Grid */}
         {budgetData.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 animate-fade-in">
             <BudgetTable budgetData={budgetData} department={department} />
             <BudgetChart budgetData={budgetData} />
           </div>
         )}
 
         {/* AI Insights */}
-        <AiInsights budgetData={budgetData} department={department} />
+        <div className="animate-fade-in">
+          <AiInsights budgetData={budgetData} department={department} />
+        </div>
 
         {/* Empty State */}
         {!summary && !loading && (
-          <Card>
-            <CardContent className="text-center py-12">
-              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Data Loaded</h3>
-              <p className="text-muted-foreground">
-                Select a department, then click "Fetch Budget Data" to view municipal budget information.
+          <Card className="bg-gradient-card border-0 shadow-lg">
+            <CardContent className="text-center py-16">
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Search className="h-10 w-10 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Ready to Explore Budget Data?</h3>
+              <p className="text-muted-foreground text-lg max-w-md mx-auto mb-6">
+                Select a department from the dropdown above and click "Analyze Budget" to view detailed financial insights and visualizations.
               </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button variant="outline" size="lg" className="hover-scale">
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  View Sample Data
+                </Button>
+                <Button asChild size="lg" className="bg-gradient-primary hover:opacity-90">
+                  <Link to="/insights">
+                    <Brain className="mr-2 h-4 w-4" />
+                    Try AI Insights
+                  </Link>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
