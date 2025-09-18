@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Brain, MessageSquare, Home } from 'lucide-react';
+import { BarChart3, Brain, MessageSquare, Home, MapPin } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar = () => {
@@ -13,6 +13,7 @@ const Navbar = () => {
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
     { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { path: '/ward', label: 'Wards', icon: MapPin },
     { path: '/insights', label: 'AI Insights', icon: Brain },
     { path: '/feedback', label: 'Feedback', icon: MessageSquare },
   ];
