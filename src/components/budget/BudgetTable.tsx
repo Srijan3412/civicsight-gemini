@@ -25,7 +25,15 @@ interface BudgetTableProps {
 }
 
 const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, department }) => {
-  const totalBudget = budgetData.reduce((sum, item) => sum + Number(item.amount), 0);
+  // Filter out invalid data and ensure we have numeric amounts
+  const validBudgetData = budgetData.filter(item => 
+    item && 
+    item.category && 
+    !isNaN(Number(item.amount)) && 
+    Number(item.amount) > 0
+  );
+
+  const totalBudget = validBudgetData.reduce((sum, item) => sum + Number(item.amount), 0);
 
   return (
     <Card>
@@ -45,16 +53,25 @@ const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, department }) => 
             </TableRow>
           </TableHeader>
           <TableBody>
-            {budgetData.map((item) => {
-              const percentage = ((Number(item.amount) / totalBudget) * 100).toFixed(1);
-              return (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.category}</TableCell>
-                  <TableCell className="text-right">{formatIndianCurrency(Number(item.amount))}</TableCell>
-                  <TableCell className="text-right">{percentage}%</TableCell>
-                </TableRow>
-              );
-            })}
+            {validBudgetData.length > 0 ? (
+              validBudgetData.map((item) => {
+                const amount = Number(item.amount);
+                const percentage = totalBudget > 0 ? ((amount / totalBudget) * 100).toFixed(1) : '0.0';
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.category}</TableCell>
+                    <TableCell className="text-right">{formatIndianCurrency(amount)}</TableCell>
+                    <TableCell className="text-right">{percentage}%</TableCell>
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                  No valid budget data available
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

@@ -18,9 +18,9 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { department } = await req.json();
+    const { department, ward } = await req.json();
 
-    console.log(`Fetching budget data for department: ${department}`);
+    console.log(`Fetching budget data for department: ${department}, ward: ${ward}`);
 
     // Validate inputs
     if (!department) {
@@ -33,12 +33,20 @@ serve(async (req) => {
       );
     }
 
-    // Fetch budget data
-    const { data: budgetData, error } = await supabase
+    // Build query with optional ward filter
+    let query = supabase
       .from('municipal_budget')
       .select('*')
-      .eq('account', department)
-      .order('used_amt', { ascending: false });
+      .eq('account', department);
+    
+    // Add ward filter if provided
+    if (ward && ward !== 'all') {
+      // Assuming ward information is stored in a column - you may need to adjust this based on your schema
+      // For now, we'll filter by a ward-related field if it exists
+      console.log('Ward filtering not implemented yet - showing all wards');
+    }
+    
+    const { data: budgetData, error } = await query.order('used_amt', { ascending: false });
 
     if (error) {
       console.error('Error fetching budget data:', error);
@@ -51,23 +59,35 @@ serve(async (req) => {
       );
     }
 
-    // Transform data to match expected format
-    const transformedData = budgetData?.map(item => ({
-      id: item.id,
-      category: item.glcode || 'Unknown Category',
-      amount: Number(item.used_amt || 0),
-      ward: 0, // Not used anymore but kept for compatibility
-      year: new Date().getFullYear() // Default to current year
-    })) || [];
+    // Transform data to match expected format using account_budget_a with proper error handling
+    const transformedData = budgetData?.map(item => {
+      const amount = item.used_amt ? Number(item.used_amt) : 0;
+      const validAmount = !isNaN(amount) ? amount : 0;
+      
+      return {
+        id: item.id,
+        category: item.account_budget_a || item.glcode || 'Unknown Category',
+        amount: validAmount,
+        ward: 0, // Not used anymore but kept for compatibility
+        year: new Date().getFullYear() // Default to current year
+      };
+    }) || [];
+
+    // Filter out any items with 0 amounts or invalid data
+    const validData = transformedData.filter(item => 
+      item.amount > 0 && 
+      item.category && 
+      item.category !== 'Unknown Category'
+    );
 
     // Calculate summary statistics
-    const totalBudget = transformedData.reduce((sum, item) => sum + item.amount, 0);
-    const largestItem = transformedData[0]; // Already sorted by used_amt desc
+    const totalBudget = validData.reduce((sum, item) => sum + item.amount, 0);
+    const largestItem = validData[0]; // Already sorted by used_amt desc
 
     const response = {
-      budgetData: transformedData,
+      budgetData: validData,
       summary: {
-        totalBudget,
+        totalBudget: totalBudget || 0,
         largestCategory: largestItem ? {
           category: largestItem.category,
           amount: largestItem.amount

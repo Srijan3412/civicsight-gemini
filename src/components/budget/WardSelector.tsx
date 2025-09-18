@@ -22,6 +22,7 @@ const WardSelector: React.FC<WardSelectorProps> = ({ value, onChange }) => {
           <SelectValue placeholder="Select a ward" />
         </SelectTrigger>
         <SelectContent className="bg-background border border-border z-50">
+          <SelectItem value="all">All Wards</SelectItem>
           <SelectItem value="1">Ward 1</SelectItem>
           <SelectItem value="2">Ward 2</SelectItem>
           <SelectItem value="3">Ward 3</SelectItem>

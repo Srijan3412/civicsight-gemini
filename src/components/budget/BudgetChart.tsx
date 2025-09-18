@@ -19,7 +19,15 @@ interface BudgetChartProps {
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', '#8884d8', '#82ca9d', '#ffc658'];
 
 const BudgetChart: React.FC<BudgetChartProps> = ({ budgetData }) => {
-  const chartData = budgetData.map((item) => ({
+  // Filter out invalid data and ensure we have numeric amounts
+  const validBudgetData = budgetData.filter(item => 
+    item && 
+    item.category && 
+    !isNaN(Number(item.amount)) && 
+    Number(item.amount) > 0
+  );
+
+  const chartData = validBudgetData.map((item) => ({
     category: item.category,
     amount: Number(item.amount),
   }));
@@ -46,16 +54,17 @@ const BudgetChart: React.FC<BudgetChartProps> = ({ budgetData }) => {
           </TabsList>
           
           <TabsContent value="bar" className="mt-6">
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={chartData} margin={{ left: 80, right: 20, top: 20, bottom: 60 }}>
+            <ResponsiveContainer width="100%" height={450}>
+              <BarChart data={chartData} margin={{ left: 90, right: 30, top: 20, bottom: 80 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="category" 
                   angle={-45}
                   textAnchor="end"
-                  height={100}
-                  fontSize={11}
+                  height={120}
+                  fontSize={10}
                   interval={0}
+                  tick={{ fontSize: 10 }}
                 />
                 <YAxis 
                   tickFormatter={formatCompactNumber} 
