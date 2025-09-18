@@ -1,7 +1,8 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { formatIndianCurrency, formatCompactNumber } from '@/lib/utils';
 
 interface BudgetItem {
   id: string;
@@ -18,18 +19,19 @@ interface BudgetChartProps {
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', '#8884d8', '#82ca9d', '#ffc658'];
 
 const BudgetChart: React.FC<BudgetChartProps> = ({ budgetData }) => {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(value);
-  };
-
   const chartData = budgetData.map((item) => ({
     category: item.category,
     amount: Number(item.amount),
   }));
+
+  // Sort data for better visualization and get top 8 for pie chart
+  const sortedData = [...chartData].sort((a, b) => b.amount - a.amount);
+  const topData = sortedData.slice(0, 8);
+  const othersAmount = sortedData.slice(8).reduce((sum, item) => sum + item.amount, 0);
+  
+  const pieData = othersAmount > 0 
+    ? [...topData, { category: 'Others', amount: othersAmount }]
+    : topData;
 
   return (
     <Card>
@@ -45,18 +47,22 @@ const BudgetChart: React.FC<BudgetChartProps> = ({ budgetData }) => {
           
           <TabsContent value="bar" className="mt-6">
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={chartData}>
+              <BarChart data={chartData} margin={{ left: 80, right: 20, top: 20, bottom: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="category" 
                   angle={-45}
                   textAnchor="end"
                   height={100}
-                  fontSize={12}
+                  fontSize={11}
+                  interval={0}
                 />
-                <YAxis tickFormatter={formatCurrency} />
+                <YAxis 
+                  tickFormatter={formatCompactNumber} 
+                  width={75}
+                />
                 <Tooltip 
-                  formatter={(value: number) => [formatCurrency(value), 'Amount']}
+                  formatter={(value: number) => [formatIndianCurrency(value), 'Amount']}
                   labelStyle={{ color: 'hsl(var(--foreground))' }}
                   contentStyle={{ 
                     backgroundColor: 'hsl(var(--background))',
@@ -64,38 +70,70 @@ const BudgetChart: React.FC<BudgetChartProps> = ({ budgetData }) => {
                     borderRadius: '6px'
                   }}
                 />
-                <Bar dataKey="amount" fill="hsl(var(--primary))" />
+                <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </TabsContent>
           
           <TabsContent value="pie" className="mt-6">
-            <ResponsiveContainer width="100%" height={400}>
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ category, percent }) => `${category} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={120}
-                  fill="#8884d8"
-                  dataKey="amount"
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  formatter={(value: number) => [formatCurrency(value), 'Amount']}
-                  contentStyle={{ 
-                    backgroundColor: 'hsl(var(--background))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '6px'
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2">
+                <ResponsiveContainer width="100%" height={400}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="amount"
+                      label={false}
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value: number) => [formatIndianCurrency(value), 'Amount']}
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--background))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '6px'
+                      }}
+                    />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={36}
+                      formatter={(value, entry) => `${value}`}
+                      wrapperStyle={{ fontSize: '12px' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-medium text-sm text-muted-foreground">Budget Breakdown</h4>
+                <div className="space-y-2 max-h-80 overflow-y-auto">
+                  {pieData.map((entry, index) => {
+                    const total = pieData.reduce((sum, item) => sum + item.amount, 0);
+                    const percentage = ((entry.amount / total) * 100).toFixed(1);
+                    return (
+                      <div key={entry.category} className="flex items-center gap-2 text-xs">
+                        <div 
+                          className="w-3 h-3 rounded-sm flex-shrink-0" 
+                          style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="truncate font-medium">{entry.category}</div>
+                          <div className="text-muted-foreground">
+                            {formatIndianCurrency(entry.amount)} ({percentage}%)
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </CardContent>

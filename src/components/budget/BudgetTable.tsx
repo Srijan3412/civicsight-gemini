@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatIndianCurrency } from '@/lib/utils';
 
 interface BudgetItem {
   id: string;
@@ -24,14 +25,6 @@ interface BudgetTableProps {
 }
 
 const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, department }) => {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const totalBudget = budgetData.reduce((sum, item) => sum + Number(item.amount), 0);
 
   return (
@@ -57,7 +50,7 @@ const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, department }) => 
               return (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.category}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(Number(item.amount))}</TableCell>
+                  <TableCell className="text-right">{formatIndianCurrency(Number(item.amount))}</TableCell>
                   <TableCell className="text-right">{percentage}%</TableCell>
                 </TableRow>
               );

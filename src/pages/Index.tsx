@@ -18,7 +18,7 @@ const Index = () => {
             </div>
             <h1 className="text-4xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
               See Where Your
-              <span className="block bg-gradient-primary bg-clip-text text-transparent">
+              <span className="block text-gray-900 drop-shadow-md">
                 Budget Goes
               </span>
             </h1>

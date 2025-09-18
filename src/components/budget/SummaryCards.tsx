@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Building } from 'lucide-react';
+import { formatIndianCurrency } from '@/lib/utils';
 
 interface SummaryCardsProps {
   summary: {
@@ -14,14 +15,6 @@ interface SummaryCardsProps {
 }
 
 const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const isPositiveChange = summary.yearOverYearChange >= 0;
 
   return (
@@ -32,7 +25,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(summary.totalBudget)}</div>
+          <div className="text-2xl font-bold">{formatIndianCurrency(summary.totalBudget)}</div>
           <p className="text-xs text-muted-foreground">
             Total allocated budget for this ward
           </p>
@@ -49,7 +42,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
             {summary.largestCategory?.category || 'N/A'}
           </div>
           <p className="text-xs text-muted-foreground">
-            {summary.largestCategory ? formatCurrency(summary.largestCategory.amount) : 'No data'}
+            {summary.largestCategory ? formatIndianCurrency(summary.largestCategory.amount) : 'No data'}
           </p>
         </CardContent>
       </Card>
