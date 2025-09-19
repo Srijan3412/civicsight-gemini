@@ -3,19 +3,22 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BarChart3, Brain, MessageSquare, Home, MapPin } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const Navbar = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { t } = useLanguage();
 
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/', label: 'Home', icon: Home },
-    { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { path: '/ward', label: 'Wards', icon: MapPin },
-    { path: '/insights', label: 'AI Insights', icon: Brain },
-    { path: '/feedback', label: 'Feedback', icon: MessageSquare },
+    { path: '/', label: t('nav.home'), icon: Home },
+    { path: '/dashboard', label: t('nav.dashboard'), icon: BarChart3 },
+    { path: '/ward', label: t('nav.wards'), icon: MapPin },
+    { path: '/insights', label: t('nav.insights'), icon: Brain },
+    { path: '/feedback', label: t('nav.feedback'), icon: MessageSquare },
   ];
 
   return (
@@ -55,21 +58,22 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Auth Section */}
+          {/* Language Selector & Auth Section */}
           <div className="flex items-center space-x-4">
+            <LanguageSelector />
             {user ? (
               <div className="flex items-center space-x-3">
                 <div className="hidden sm:flex flex-col items-end">
-                  <span className="text-sm font-medium text-foreground">Welcome back</span>
+                  <span className="text-sm font-medium text-foreground">{t('nav.welcome')}</span>
                   <span className="text-xs text-muted-foreground">{user.email}</span>
                 </div>
                 <Button variant="outline" size="sm" onClick={signOut} className="hover-scale">
-                  Sign Out
+                  {t('nav.signOut')}
                 </Button>
               </div>
             ) : (
               <Button asChild size="sm" className="bg-gradient-primary hover:opacity-90 shadow-md">
-                <Link to="/auth">Sign In</Link>
+                <Link to="/auth">{t('nav.signIn')}</Link>
               </Button>
             )}
           </div>

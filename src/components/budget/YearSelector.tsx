@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface YearSelectorProps {
   value: string;
@@ -14,6 +15,7 @@ interface YearSelectorProps {
 }
 
 const YearSelector: React.FC<YearSelectorProps> = ({ value, onChange }) => {
+  const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
   const years = [];
   
@@ -24,10 +26,10 @@ const YearSelector: React.FC<YearSelectorProps> = ({ value, onChange }) => {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="year-select">Year</Label>
+      <Label htmlFor="year-select">{t('dashboard.year')}</Label>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger id="year-select" className="bg-background">
-          <SelectValue placeholder="Select a year" />
+          <SelectValue placeholder={t('dashboard.selectYear')} />
         </SelectTrigger>
         <SelectContent className="bg-background border border-border z-50">
           {years.map((year) => (

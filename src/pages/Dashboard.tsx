@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, LogOut, Search, BarChart3, Brain } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import SummaryCards from '@/components/budget/SummaryCards';
@@ -38,6 +39,7 @@ const Dashboard = () => {
   const [summary, setSummary] = useState<BudgetSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const { user, signOut } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -51,8 +53,8 @@ const Dashboard = () => {
     if (!department) {
       toast({
         variant: "destructive",
-        title: "Missing Information",
-        description: "Please select a department.",
+        title: t('errors.invalidData'),
+        description: t('dashboard.selectDepartment'),
       });
       return;
     }
@@ -75,15 +77,15 @@ const Dashboard = () => {
       setSummary(data.summary || null);
       
       toast({
-        title: "Data Loaded",
-        description: `Found ${data.budgetData?.length || 0} budget items for ${department}.`,
+        title: t('common.loading'),
+        description: t('dashboard.noDataMessage', `Found ${data.budgetData?.length || 0} budget items for ${department}.`),
       });
     } catch (error) {
       console.error('Error fetching budget data:', error);
       toast({
         variant: "destructive",
-        title: "Fetch Failed",
-        description: "Failed to fetch budget data. Please try again.",
+        title: t('errors.fetchFailed'),
+        description: t('errors.tryAgain'),
       });
     } finally {
       setLoading(false);
@@ -105,8 +107,8 @@ const Dashboard = () => {
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Budget Dashboard</h1>
-            <p className="text-muted-foreground">Welcome, {user.email}</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('dashboard.title')}</h1>
+            <p className="text-muted-foreground">{t('nav.welcome')}, {user.email}</p>
           </div>
         </div>
       </header>
@@ -120,9 +122,9 @@ const Dashboard = () => {
                 <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
                   <BarChart3 className="h-5 w-5 text-white" />
                 </div>
-                Budget Data Explorer
+                {t('dashboard.budgetExplorer')}
               </CardTitle>
-              <p className="text-muted-foreground">Select a department to analyze municipal budget allocation and spending patterns.</p>
+              <p className="text-muted-foreground">{t('dashboard.selectDepartment')}</p>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -141,7 +143,7 @@ const Dashboard = () => {
                   >
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     <Search className="mr-2 h-4 w-4" />
-                    {loading ? 'Loading...' : 'Analyze Budget'}
+                    {loading ? t('common.loading') : t('dashboard.analyzeData')}
                   </Button>
                 </div>
                 <div className="md:col-span-1">
@@ -179,19 +181,19 @@ const Dashboard = () => {
               <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Search className="h-10 w-10 text-primary" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4">Ready to Explore Budget Data?</h3>
+              <h3 className="text-2xl font-semibold mb-4">{t('dashboard.noDataMessage')}</h3>
               <p className="text-muted-foreground text-lg max-w-md mx-auto mb-6">
-                Select a department from the dropdown above and click "Analyze Budget" to view detailed financial insights and visualizations.
+                {t('dashboard.sampleDataNote')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button variant="outline" size="lg" className="hover-scale">
                   <BarChart3 className="mr-2 h-4 w-4" />
-                  View Sample Data
+                  {t('dashboard.viewSample')}
                 </Button>
                 <Button asChild size="lg" className="bg-gradient-primary hover:opacity-90">
                   <Link to="/insights">
                     <Brain className="mr-2 h-4 w-4" />
-                    Try AI Insights
+                    {t('dashboard.getInsights')}
                   </Link>
                 </Button>
               </div>

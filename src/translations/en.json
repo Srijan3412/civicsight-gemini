@@ -1,0 +1,86 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "noData": "No data available",
+    "select": "Select",
+    "all": "All",
+    "total": "Total",
+    "amount": "Amount",
+    "percentage": "Percentage",
+    "year": "Year",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "ok": "OK"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "wards": "Wards",
+    "insights": "AI Insights",
+    "feedback": "Feedback",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "welcome": "Welcome back"
+  },
+  "dashboard": {
+    "title": "Municipal Budget Dashboard",
+    "budgetExplorer": "Budget Data Explorer",
+    "department": "Department",
+    "selectDepartment": "Select a department",
+    "ward": "Ward",
+    "selectWard": "Select a ward",
+    "year": "Year",
+    "selectYear": "Select a year",
+    "analyzeData": "Analyze Data",
+    "importCsv": "Import CSV",
+    "viewSample": "View Sample Data",
+    "getInsights": "Get AI Insights",
+    "noDataMessage": "No budget data loaded. Select a department and ward, then click 'Analyze Data' to view budget information.",
+    "sampleDataNote": "Or click 'View Sample Data' to see example budget information."
+  },
+  "table": {
+    "category": "Category",
+    "account": "Account",
+    "glcode": "GL Code",
+    "accountBudget": "Account Budget",
+    "usedAmount": "Used Amount",
+    "remainingAmount": "Remaining Amount",
+    "budgetUtilization": "Budget Utilization",
+    "noValidData": "No valid budget data available"
+  },
+  "summary": {
+    "totalBudget": "Total Budget",
+    "largestCategory": "Largest Category",
+    "yearOverYearChange": "Year-over-Year Change",
+    "increase": "Increase",
+    "decrease": "Decrease"
+  },
+  "chart": {
+    "budgetDistribution": "Budget Distribution",
+    "categoryWiseBudget": "Category-wise Budget Analysis",
+    "usedVsRemaining": "Used vs Remaining Budget"
+  },
+  "ward": {
+    "title": "Ward Budget Analysis",
+    "selectWard": "Select a ward to view detailed budget information",
+    "budgetOverview": "Budget Overview for Ward",
+    "allWards": "All Wards",
+    "ward1": "Ward 1",
+    "ward2": "Ward 2",
+    "ward3": "Ward 3",
+    "ward4": "Ward 4",
+    "ward5": "Ward 5"
+  },
+  "errors": {
+    "fetchFailed": "Failed to fetch data",
+    "invalidData": "Invalid data received",
+    "networkError": "Network error occurred",
+    "tryAgain": "Please try again later"
+  }
+}

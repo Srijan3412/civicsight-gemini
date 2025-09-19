@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatIndianCurrency } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface BudgetItem {
   id: string;
@@ -25,6 +26,8 @@ interface BudgetTableProps {
 }
 
 const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, department }) => {
+  const { t } = useLanguage();
+  
   // Filter out invalid data and ensure we have numeric amounts
   const validBudgetData = budgetData.filter(item => 
     item && 
@@ -38,18 +41,18 @@ const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, department }) => 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Budget Data - {department}</CardTitle>
+        <CardTitle>{t('table.category')} - {department}</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableCaption>
-            Municipal budget allocation by category
+            {t('chart.budgetDistribution')}
           </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>Category</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="text-right">Percentage</TableHead>
+              <TableHead>{t('table.category')}</TableHead>
+              <TableHead className="text-right">{t('common.amount')}</TableHead>
+              <TableHead className="text-right">{t('common.percentage')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -68,7 +71,7 @@ const BudgetTable: React.FC<BudgetTableProps> = ({ budgetData, department }) => 
             ) : (
               <TableRow>
                 <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                  No valid budget data available
+                  {t('table.noValidData')}
                 </TableCell>
               </TableRow>
             )}
